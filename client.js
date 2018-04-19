@@ -27,8 +27,8 @@ port = definePort(port);
 
 let client = net.connect(port, host);
 client.on('connect', function() {
+	client.write('\nNew client on chat');
 	client.write('/nickname ' + nick);
-	client.write('New client on chat');
 });
 client.on('data', function(message) {
 	console.log(message.toString());
