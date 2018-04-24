@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import expressValidator from 'express-validator';
 
 import { user } from './api/github';
+import { country } from './api/country';
+import { expression } from './api/expression';
 
 dotenv.config({ path: '.env.example' });
 const app = express();
@@ -17,5 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 
 app.get('/git/:nickname', user);
+app.get('/country/:country', country);
+app.get('/expression/:expression', expression);
 
 export default app;

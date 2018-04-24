@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-const fetch = require('node-fetch');
 import axios from 'axios';
 const url: string = 'https://api.github.com/users';
 

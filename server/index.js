@@ -5,7 +5,7 @@ const actions = require('./actions');
 let connections = [];
 const args = process.argv.slice(2);
 let port = filters.listen(args, '-p') || filters.listen(args, '--port') || 6667;
-
+const botUrl = 'http://10.42.0.1:3000';
 console.log('Server start at', port);
 
 const colorize = (...args) => ({
@@ -29,7 +29,7 @@ const colorize = (...args) => ({
 
 let botBroadcast = function(message, origin) {
 	connections.forEach(function(connection) {
-		connection.write(colorize(message).bgMagenta);
+		connection.write(colorize(message).bgGreen);
 	});
 };
 
@@ -55,14 +55,25 @@ let commander = (message, connection) => {
 		me: () => {
 			connection.forAll = false;
 			let color = connection.color || 'white';
-			let messageForAll = colorize(connection.nickname)[color] + ': ' + message.toString().replace('/me ', '');
+			let messageForAll =
+				colorize(connection.nickname)[color] + ': ' + message.toString().replace('/me ', '');
 			broadcast(colorize(messageForAll).bgBlue, connection);
 		},
 		color: () => {
 			let color = message.split('/color ')[1];
 			connection.forAll = true;
-			broadcast(`${colorize(connection.nickname)[color]} now is ${color}`, connection);
+			botBroadcast(`${colorize(connection.nickname)[color]} now is ${color}`, connection);
 			connection.color = color;
+		},
+		git: () => {
+			let user = message.split('/git ')[1];
+			axios
+				.get(`${botUrl}/git/${user}`)
+				.then((response) => {
+					console.log(response.data);
+					botBroadcast(response.data.blog);
+				})
+				.catch((error) => console.log(error));
 		},
 	};
 	try {
@@ -79,10 +90,10 @@ net
 		connection.on('data', function(message) {
 			connection.forAll = true;
 			connection = commander(message.toString(), connection);
-			let nickname = connection.nickname; //|| 'fluffykins' + new Date().getMilliseconds();
+			let nickname = connection.nickname;
 			if (connection.forAll && nickname !== undefined) {
 				let color = connection.color || 'white';
-				let messageForAll = colorize(nickname)[color] + ' >>> ' + message.toString();
+				const messageForAll = colorize(nickname)[color] + colorize(' >>> ' + message.toString()).white;
 				broadcast(messageForAll, connection);
 			}
 		});
