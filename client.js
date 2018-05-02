@@ -18,11 +18,15 @@ definePort = (port) => {
 	return port < 65535 && port > 1024 ? port : 6667;
 };
 const arguments = process.argv.slice(2);
-let port = !!filterArgument(arguments, '-p') ? filterArgument(arguments, '-p') : filterArgument(arguments, '--port');
+let port = !!filterArgument(arguments, '-p')
+	? filterArgument(arguments, '-p')
+	: filterArgument(arguments, '--port');
 let nick = !!filterArgument(arguments, '-n')
 	? filterArgument(arguments, '-n')
 	: filterArgument(arguments, '--nick') || 'fluffikins' + new Date().getMilliseconds();
-let host = !!filterArgument(arguments, '-h') ? filterArgument(arguments, '-h') : filterArgument(arguments, '--host');
+let host = !!filterArgument(arguments, '-h')
+	? filterArgument(arguments, '-h')
+	: filterArgument(arguments, '--host');
 port = definePort(port);
 
 let client = net.connect(port, host);
